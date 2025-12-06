@@ -172,9 +172,12 @@ void StartComTask(void *argument)
 {
   /* USER CODE BEGIN ComTask */
   /* Infinite loop */
+	char message[1]={'a'};
+
   for(;;)
   {
-    osDelay(500);
+	  HAL_UART_Transmit(&huart1, &message, 1, HAL_MAX_DELAY);
+    osDelay(2000);
   }
   /* USER CODE END ComTask */
 }
