@@ -26,6 +26,7 @@
 #define EEPROM_CS_PIN   EEPROM_NCS_Pin
 
 #define EEPROM_WIP_BIT_MASK 0x01    // Mask to check Bit 0 (Write In Progress)
+#define WRITE_TIMEOUT_MS 5 // 500ms should be safe for most sector/page erases
 #define ERASE_TIMEOUT_MS 500 // 500ms should be safe for most sector/page erases
 #define SECTOR_ERASE_TIMEOUT_MS 500  // 500ms should be safe for most sectors (e.g., 4kB/64kB)
 #define CHIP_ERASE_TIMEOUT_MS 5000 // 5000ms (5 seconds) for safety, as chip erase is the slowest

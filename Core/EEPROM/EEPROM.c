@@ -40,9 +40,7 @@ HAL_StatusTypeDef EEPROM_Write_Byte(uint16_t mem_address, uint8_t data)
     EEPROM_CS_Deselect();
 
     // 3. Wait for the internal write cycle to complete (Check your datasheet!)
-    // For production code, use a function that polls the Status Register (RDSR)
-    // to check the Write In Progress (WIP) bit.
-    HAL_Delay(5);
+    status = EEPROM_Wait_For_Write_Completion(WRITE_TIMEOUT_MS);
 
     return status;
 }
@@ -116,9 +114,7 @@ HAL_StatusTypeDef EEPROM_Page_Write(uint16_t start_address, uint8_t *pData)
     EEPROM_CS_Deselect();
 
     // --- 4. Wait for the internal write cycle to complete (MANDATORY) ---
-    // Use Status Register Polling (RDSR) for optimal performance,
-    // but a delay is the simpler implementation for testing.
-    HAL_Delay(5);
+    status = EEPROM_Wait_For_Write_Completion(WRITE_TIMEOUT_MS);
 
     return status;
 }
