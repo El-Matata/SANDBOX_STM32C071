@@ -65,6 +65,13 @@ const osThreadAttr_t ComTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 128 * 4
 };
+/* Definitions for DisplayTask */
+osThreadId_t DisplayTaskHandle;
+const osThreadAttr_t DisplayTask_attributes = {
+  .name = "DisplayTask",
+  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 1024 * 4
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -104,6 +111,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of ComTask */
   ComTaskHandle = osThreadNew(StartComTask, NULL, &ComTask_attributes);
+
+  /* creation of DisplayTask */
+  DisplayTaskHandle = osThreadNew(StartDisplayTask, NULL, &DisplayTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -164,11 +174,28 @@ void StartComTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-	  HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-	  HAL_GPIO_TogglePin(LED2_GPIO_Port, LED2_Pin);
     osDelay(500);
   }
   /* USER CODE END ComTask */
+}
+
+/* USER CODE BEGIN Header_StartDisplayTask */
+/**
+* @brief Function implementing the DisplayTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartDisplayTask */
+void StartDisplayTask(void *argument)
+{
+  /* USER CODE BEGIN DisplayTask */
+  /* Infinite loop */
+  display_Init();
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END DisplayTask */
 }
 
 /* Private application code --------------------------------------------------*/
