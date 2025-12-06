@@ -15,6 +15,8 @@
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
 
+#include "Graphics/Images.h"
+
 typedef enum {
 	TEMPERATURE,
 	HUMIDITY,
@@ -24,6 +26,7 @@ typedef enum {
 
 
 void display_Init(void);
-void display_Data_OLED(DATA_DISPLAY_t DATA_TYPE, double  data);
+void display_Data_OLED(uint8_t DATA_TYPE, double data);
+void display_Wombat(void);
 
 #endif /* OLED_DISPLAY_H_ */

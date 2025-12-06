@@ -203,7 +203,8 @@ void StartDisplayTask(void *argument)
 {
   /* USER CODE BEGIN DisplayTask */
   /* Infinite loop */
-  display_Init();
+  //display_Init();
+  //display_Wombat();
   for(;;)
   {
     osDelay(1);
@@ -222,7 +223,7 @@ void StartLoggerTask(void *argument)
 {
   /* USER CODE BEGIN LoggerTask */
   /* Infinite loop */
-
+/*
 	uint8_t write_page_buffer[EEPROM_PAGE_SIZE]={0};
 	uint8_t read_page_buffer[EEPROM_PAGE_SIZE]={0};
 
@@ -236,7 +237,7 @@ void StartLoggerTask(void *argument)
 	EEPROM_Chip_Erase();
 
 	EEPROM_Page_Read(PAGE_0_ADDRESS, read_page_buffer);
-
+*/
   for(;;)
   {
     osDelay(1);
