@@ -34,6 +34,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "../OLED/display.h"
 #include "../EEPROM/EEPROM.h"
+#include "../ToF/VL53L0X.h"
 
 #include "usart.h"
 #include "string.h"

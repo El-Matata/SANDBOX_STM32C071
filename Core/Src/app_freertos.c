@@ -205,8 +205,28 @@ void StartDisplayTask(void *argument)
   /* Infinite loop */
   display_Init();
   display_Wombat();
+
+  osDelay(100);
+
+	// Initialise the VL53L0X
+	statInfo_t_VL53L0X distanceStr;
+	initVL53L0X(1, &hi2c1);
+
+	// Configure the sensor for high accuracy and speed in 20 cm.
+	setSignalRateLimit(200);
+	setVcselPulsePeriod(VcselPeriodPreRange, 10);
+	setVcselPulsePeriod(VcselPeriodFinalRange, 14);
+	setMeasurementTimingBudget(300 * 1000UL);
+
+	uint16_t distance;
+
   for(;;)
   {
+	  // uint16_t distance is the distance in millimeters.
+	  		// statInfo_t_VL53L0X distanceStr is the statistics read from the sensor.
+	  		distance = readRangeSingleMillimeters(&distanceStr);
+
+	  		display_distance(distance);
     osDelay(1);
   }
   /* USER CODE END DisplayTask */

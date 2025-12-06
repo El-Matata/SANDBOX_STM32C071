@@ -63,6 +63,18 @@ void display_Data_OLED(uint8_t DATA_TYPE, double data){
 	ssd1306_UpdateScreen();
 }
 
+void display_distance(uint16_t distance){
+
+	char buffer[32];
+
+	sprintf(buffer, "%d  ", distance);
+
+	ssd1306_SetCursor(0,0);
+	ssd1306_WriteString(buffer, Font_6x8, White);
+
+	ssd1306_UpdateScreen();
+}
+
 void display_Wombat(void){
 	const unsigned char WombatBitMap [] = {
 		0x00, 0x00, 0x00, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x70, 0x00, 0x00,

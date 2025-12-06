@@ -27,6 +27,7 @@ typedef enum {
 
 void display_Init(void);
 void display_Data_OLED(uint8_t DATA_TYPE, double data);
+void display_distance(uint16_t distance);
 void display_Wombat(void);
 
 #endif /* OLED_DISPLAY_H_ */
