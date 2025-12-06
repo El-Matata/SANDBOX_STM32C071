@@ -33,7 +33,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "../OLED/display.h"
-#include "../EEPROM/25LCxx_driver_basic.h"
+#include "../EEPROM/EEPROM.h"
 
 #include "usart.h"
 #include "string.h"

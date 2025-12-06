@@ -222,7 +222,21 @@ void StartLoggerTask(void *argument)
 {
   /* USER CODE BEGIN LoggerTask */
   /* Infinite loop */
-	//e_25LCxx_basic_initialize(E_25LC512_MAX_ADD, E_25LCXX_PAGE_SIZE_128_BYTE);
+
+	uint8_t write_page_buffer[EEPROM_PAGE_SIZE]={0};
+	uint8_t read_page_buffer[EEPROM_PAGE_SIZE]={0};
+
+	for (int i = 0; i < EEPROM_PAGE_SIZE; i++) {
+	        write_page_buffer[i] = (uint8_t)i; // 0, 1, 2, ... 127
+	}
+	EEPROM_Page_Write(PAGE_0_ADDRESS, write_page_buffer);
+
+	EEPROM_Page_Read(PAGE_0_ADDRESS, read_page_buffer);
+
+	EEPROM_Chip_Erase();
+
+	EEPROM_Page_Read(PAGE_0_ADDRESS, read_page_buffer);
+
   for(;;)
   {
     osDelay(1);

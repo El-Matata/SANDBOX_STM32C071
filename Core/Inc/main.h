@@ -59,6 +59,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define RED_LED_Pin GPIO_PIN_3
 #define RED_LED_GPIO_Port GPIOA
+#define EEPROM_NCS_Pin GPIO_PIN_4
+#define EEPROM_NCS_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
