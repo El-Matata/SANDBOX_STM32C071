@@ -29,36 +29,8 @@ typedef struct {
 display_t display_Info;
 
 void display_Init(void){
-	display_Info.font_Size = &Font_6x8;
-	display_Info.background_Color = Black;
-
-	display_Info.temperature_x_Cursor = display_Info.font_Size->width*(sizeof("TEMPERATURE"));
-	display_Info.temperature_y_Cursor = display_Info.font_Size->height*TEMPERATURE;
-
-	display_Info.humidity_x_Cursor = display_Info.font_Size->width*(sizeof("HUMIDITY"));
-	display_Info.humidity_y_Cursor = display_Info.font_Size->height*HUMIDITY;
-
-	display_Info.day_x_Cursor = display_Info.font_Size->width*(sizeof("DAY"));
-	display_Info.day_y_Cursor = display_Info.font_Size->height*DAY;
-
-	display_Info.time_x_Cursor = display_Info.font_Size->width*(sizeof("TIME"));
-	display_Info.time_y_Cursor = display_Info.font_Size->height*TIME;
-
 	ssd1306_Init();
-	ssd1306_Fill(display_Info.background_Color);
-
-	ssd1306_SetCursor(0, display_Info.temperature_y_Cursor);
-	ssd1306_WriteString("TEMPERATURE ", *display_Info.font_Size, White);
-
-	ssd1306_SetCursor(0, display_Info.humidity_y_Cursor);
-	ssd1306_WriteString("HUMIDITY ", *display_Info.font_Size, White);
-
-	ssd1306_SetCursor(0, display_Info.day_y_Cursor);
-	ssd1306_WriteString("DAY ", *display_Info.font_Size, White);
-
-	ssd1306_SetCursor(0, display_Info.time_y_Cursor);
-	ssd1306_WriteString("TIME ", *display_Info.font_Size, White);
-
+	ssd1306_Fill(Black);
 	ssd1306_UpdateScreen();
 }
 
@@ -90,7 +62,7 @@ void display_Data_OLED(uint8_t DATA_TYPE, double data){
 	}
 	ssd1306_UpdateScreen();
 }
-/*
+
 void display_Wombat(void){
 	const unsigned char WombatBitMap [] = {
 		0x00, 0x00, 0x00, 0x38, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x70, 0x00, 0x00,
@@ -160,7 +132,7 @@ void display_Wombat(void){
 	};
 	ssd1306_DrawBitmap(0, 0, WombatBitMap, 128, 64, White);
 	ssd1306_UpdateScreen();
-}*/
+}
 
 
 

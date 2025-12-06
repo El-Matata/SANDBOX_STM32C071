@@ -203,8 +203,8 @@ void StartDisplayTask(void *argument)
 {
   /* USER CODE BEGIN DisplayTask */
   /* Infinite loop */
-  //display_Init();
-  //display_Wombat();
+  display_Init();
+  display_Wombat();
   for(;;)
   {
     osDelay(1);
