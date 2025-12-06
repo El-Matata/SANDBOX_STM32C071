@@ -72,6 +72,13 @@ const osThreadAttr_t DisplayTask_attributes = {
   .priority = (osPriority_t) osPriorityLow,
   .stack_size = 1024 * 4
 };
+/* Definitions for LoggerTask */
+osThreadId_t LoggerTaskHandle;
+const osThreadAttr_t LoggerTask_attributes = {
+  .name = "LoggerTask",
+  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 512 * 4
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -114,6 +121,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of DisplayTask */
   DisplayTaskHandle = osThreadNew(StartDisplayTask, NULL, &DisplayTask_attributes);
+
+  /* creation of LoggerTask */
+  LoggerTaskHandle = osThreadNew(StartLoggerTask, NULL, &LoggerTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -172,12 +182,12 @@ void StartComTask(void *argument)
 {
   /* USER CODE BEGIN ComTask */
   /* Infinite loop */
-	char message[1]={'a'};
-
+	char message[50]={"Hello World!\r\n"};
+	  HAL_UART_Transmit(&huart1, message, strlen(message), HAL_MAX_DELAY);
   for(;;)
   {
-	  HAL_UART_Transmit(&huart1, &message, 1, HAL_MAX_DELAY);
-    osDelay(2000);
+
+    osDelay(100);
   }
   /* USER CODE END ComTask */
 }
@@ -199,6 +209,25 @@ void StartDisplayTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END DisplayTask */
+}
+
+/* USER CODE BEGIN Header_StartLoggerTask */
+/**
+* @brief Function implementing the LoggerTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartLoggerTask */
+void StartLoggerTask(void *argument)
+{
+  /* USER CODE BEGIN LoggerTask */
+  /* Infinite loop */
+	//e_25LCxx_basic_initialize(E_25LC512_MAX_ADD, E_25LCXX_PAGE_SIZE_128_BYTE);
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END LoggerTask */
 }
 
 /* Private application code --------------------------------------------------*/
