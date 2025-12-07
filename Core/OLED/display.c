@@ -31,6 +31,7 @@ display_t display_Info;
 void display_Init(void){
 	ssd1306_Init();
 	ssd1306_Fill(Black);
+	ssd1306_SetContrast(127);
 	ssd1306_UpdateScreen();
 }
 
