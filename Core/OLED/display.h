@@ -9,24 +9,20 @@
 #define OLED_DISPLAY_H_
 
 #include "stdio.h"
-
-
 #include "ssd1306_tests.h"
 #include "ssd1306.h"
 #include "ssd1306_fonts.h"
 
-#include "Graphics/Images.h"
 
 typedef enum {
-	TEMPERATURE,
-	HUMIDITY,
-	DAY,
-	TIME
-} DATA_DISPLAY_t ;
+	SMALL,
+	MEDIUM,
+	LARGE,
+} font_size_t ;
 
-
-void display_Init(void);
-void display_Data_OLED(uint8_t DATA_TYPE, double data);
+void display_init(void);
+void display_clear(void);
+void display_string(uint8_t cursor_x, uint8_t cursor_y, char* string,font_size_t Font);
 void display_distance(uint16_t distance);
 void display_Wombat(void);
 

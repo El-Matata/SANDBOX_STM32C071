@@ -147,7 +147,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	  osDelay(1);
   }
   /* USER CODE END defaultTask */
 }
@@ -166,7 +166,7 @@ void StartHeartbeatTask(void *argument)
   for(;;)
   {
 	  HAL_GPIO_TogglePin(RED_LED_GPIO_Port, RED_LED_Pin);
-    osDelay(500);
+	  osDelay(500);
   }
   /* USER CODE END HeartbeatTask */
 }
@@ -182,8 +182,8 @@ void StartComTask(void *argument)
 {
   /* USER CODE BEGIN ComTask */
   /* Infinite loop */
-	char message[50]={"Hello World!\r\n"};
-	  HAL_UART_Transmit(&huart1, message, strlen(message), HAL_MAX_DELAY);
+	uint8_t message[50]={"Hello World!\r\n"};
+	HAL_UART_Transmit(&huart1, message, strlen((char*)message), HAL_MAX_DELAY);
   for(;;)
   {
 
@@ -203,10 +203,12 @@ void StartDisplayTask(void *argument)
 {
   /* USER CODE BEGIN DisplayTask */
   /* Infinite loop */
-  display_Init();
-  display_Wombat();
+	char message[50] = {0};
+	display_init();
+	display_string(0, 0, "HELLO", SMALL);
+	display_Wombat();
 
-  osDelay(100);
+
 
 	// Initialise the VL53L0X
 	statInfo_t_VL53L0X distanceStr;
@@ -222,12 +224,16 @@ void StartDisplayTask(void *argument)
 
   for(;;)
   {
-	  // uint16_t distance is the distance in millimeters.
-	  		// statInfo_t_VL53L0X distanceStr is the statistics read from the sensor.
-	  		distance = readRangeSingleMillimeters(&distanceStr);
+	distance = readRangeSingleMillimeters(&distanceStr);
+	if(distance>500){
+		sprintf(message, "distance = %d  ", distance);
+		display_string(0, 0, message, SMALL);
 
-	  		display_distance(distance);
-    osDelay(1);
+	}
+	else if (distance<500){
+		display_clear();
+	}
+	osDelay(1);
   }
   /* USER CODE END DisplayTask */
 }
