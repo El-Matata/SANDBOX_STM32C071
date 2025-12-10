@@ -32,6 +32,13 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+// Define constants
+
+
+// Define variables
+extern uint8_t ReceivedByte;
+extern uint8_t RxBuffer[RX_BUFFER_SIZE];;
+extern uint8_t TxBuffer[TX_BUFFER_SIZE];;
 
 /* USER CODE END PD */
 
@@ -42,7 +49,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+extern uint8_t recvd_data;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -183,12 +190,13 @@ void StartComTask(void *argument)
   /* USER CODE BEGIN ComTask */
   /* Infinite loop */
 	char message[50]={"Hello World!\r\n"};
-	  HAL_UART_Transmit(&huart1, message, strlen(message), HAL_MAX_DELAY);
-  for(;;)
-  {
+	HAL_UART_Transmit(&huart1, (uint8_t*)message, strlen(message), HAL_MAX_DELAY);
 
-    osDelay(100);
-  }
+	HAL_UART_Receive_IT(&huart1,&ReceivedByte,1); //start next data receive interrupt
+	for(;;)
+	{
+	  osDelay(1);
+	}
   /* USER CODE END ComTask */
 }
 
@@ -222,12 +230,9 @@ void StartDisplayTask(void *argument)
 
   for(;;)
   {
-	  // uint16_t distance is the distance in millimeters.
-	  		// statInfo_t_VL53L0X distanceStr is the statistics read from the sensor.
-	  		distance = readRangeSingleMillimeters(&distanceStr);
-
-	  		display_distance(distance);
-    osDelay(1);
+	distance = readRangeSingleMillimeters(&distanceStr);
+	display_distance(distance);
+	osDelay(1);
   }
   /* USER CODE END DisplayTask */
 }
@@ -243,7 +248,7 @@ void StartLoggerTask(void *argument)
 {
   /* USER CODE BEGIN LoggerTask */
   /* Infinite loop */
-/*
+
 	uint8_t write_page_buffer[EEPROM_PAGE_SIZE]={0};
 	uint8_t read_page_buffer[EEPROM_PAGE_SIZE]={0};
 
@@ -257,7 +262,7 @@ void StartLoggerTask(void *argument)
 	EEPROM_Chip_Erase();
 
 	EEPROM_Page_Read(PAGE_0_ADDRESS, read_page_buffer);
-*/
+
   for(;;)
   {
     osDelay(1);

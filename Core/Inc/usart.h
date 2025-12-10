@@ -29,18 +29,23 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
+#include "string.h"
 
 /* USER CODE END Includes */
 
 extern UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN Private defines */
+#define RX_BUFFER_SIZE 1025
+#define TX_BUFFER_SIZE 1025
+#define END_OF_LINE_CHAR '\r' // or '\n' depending on console setup
 
 /* USER CODE END Private defines */
 
 void MX_USART1_UART_Init(void);
 
 /* USER CODE BEGIN Prototypes */
+
 
 /* USER CODE END Prototypes */
 

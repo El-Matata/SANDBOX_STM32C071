@@ -21,6 +21,10 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
+uint8_t RxBuffer[RX_BUFFER_SIZE];
+uint8_t TxBuffer[TX_BUFFER_SIZE];
+uint8_t ReceivedByte;
+uint32_t count=0; // count how many bytes are received
 
 /* USER CODE END 0 */
 
@@ -44,7 +48,7 @@ void MX_USART1_UART_Init(void)
   huart1.Init.StopBits = UART_STOPBITS_1;
   huart1.Init.Parity = UART_PARITY_NONE;
   huart1.Init.Mode = UART_MODE_TX_RX;
-  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_RTS_CTS;
   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   huart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
@@ -98,6 +102,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     /**USART1 GPIO Configuration
     PA0     ------> USART1_TX
     PA1     ------> USART1_RX
+    PA11 [PA9]     ------> USART1_CTS
+    PA12 [PA10]     ------> USART1_RTS
     */
     GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -106,6 +112,16 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Alternate = GPIO_AF4_USART1;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+    GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF1_USART1;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    /* USART1 interrupt Init */
+    HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(USART1_IRQn);
   /* USER CODE BEGIN USART1_MspInit 1 */
 
   /* USER CODE END USART1_MspInit 1 */
@@ -126,9 +142,13 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
     /**USART1 GPIO Configuration
     PA0     ------> USART1_TX
     PA1     ------> USART1_RX
+    PA11 [PA9]     ------> USART1_CTS
+    PA12 [PA10]     ------> USART1_RTS
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_0|GPIO_PIN_1);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_11|GPIO_PIN_12);
 
+    /* USART1 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(USART1_IRQn);
   /* USER CODE BEGIN USART1_MspDeInit 1 */
 
   /* USER CODE END USART1_MspDeInit 1 */
@@ -136,5 +156,31 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	if (huart->Instance == USART1)
+	{
+
+		 if(ReceivedByte != '\r') //when ENTER is pressed go to this condition
+		 {
+			 RxBuffer[count++] = ReceivedByte; // every time when interrput is happen, received 1 byte of data
+			 if (count >= (RX_BUFFER_SIZE - 1))
+			 {
+				 count = 0; // Prevent buffer overflow
+			 }
+		 }
+		 else
+		 {
+
+			 RxBuffer[count++]='\r';
+			 RxBuffer[count++]='\n';
+			 HAL_UART_Transmit(&huart1,RxBuffer,count,HAL_MAX_DELAY); //transmit the full sentence again
+			 memset(RxBuffer, 0, count); // enpty the data buffer
+			 count = 0;
+		 }
+		 HAL_UART_Receive_IT(&huart1,&ReceivedByte,1); //start next data receive interrupt
+
+
+	}
+}
 
 /* USER CODE END 1 */
