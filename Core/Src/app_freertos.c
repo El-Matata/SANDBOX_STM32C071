@@ -39,6 +39,9 @@
 extern uint8_t ReceivedByte;
 extern uint8_t RxBuffer[RX_BUFFER_SIZE];;
 extern uint8_t TxBuffer[TX_BUFFER_SIZE];;
+extern uint8_t image_received;
+extern uint32_t count; // count how many bytes are received
+
 
 /* USER CODE END PD */
 
@@ -249,22 +252,15 @@ void StartLoggerTask(void *argument)
   /* USER CODE BEGIN LoggerTask */
   /* Infinite loop */
 
-	uint8_t write_page_buffer[EEPROM_PAGE_SIZE]={0};
-	uint8_t read_page_buffer[EEPROM_PAGE_SIZE]={0};
-
-	for (int i = 0; i < EEPROM_PAGE_SIZE; i++) {
-	        write_page_buffer[i] = (uint8_t)i; // 0, 1, 2, ... 127
-	}
-	EEPROM_Page_Write(PAGE_0_ADDRESS, write_page_buffer);
-
-	EEPROM_Page_Read(PAGE_0_ADDRESS, read_page_buffer);
-
-	EEPROM_Chip_Erase();
-
-	EEPROM_Page_Read(PAGE_0_ADDRESS, read_page_buffer);
 
   for(;;)
   {
+	if(image_received == 1){
+		EEPROM_Write1K(&hspi1, 0x00000, RxBuffer, count);
+		memset(RxBuffer, 0, count); // enpty the data buffer
+		count = 0;
+		image_received = 0;
+	}
     osDelay(1);
   }
   /* USER CODE END LoggerTask */

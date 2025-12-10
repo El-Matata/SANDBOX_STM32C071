@@ -25,6 +25,7 @@ uint8_t RxBuffer[RX_BUFFER_SIZE];
 uint8_t TxBuffer[TX_BUFFER_SIZE];
 uint8_t ReceivedByte;
 uint32_t count=0; // count how many bytes are received
+uint8_t image_received = 0;
 
 /* USER CODE END 0 */
 
@@ -172,10 +173,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 		 {
 
 			 RxBuffer[count++]='\r';
-			 RxBuffer[count++]='\n';
 			 HAL_UART_Transmit(&huart1,RxBuffer,count,HAL_MAX_DELAY); //transmit the full sentence again
+			 /*EEPROM_Write1K(&hspi1, 0x00000, RxBuffer, count);
 			 memset(RxBuffer, 0, count); // enpty the data buffer
-			 count = 0;
+			 count = 0;*/
+			 image_received = 1;
 		 }
 		 HAL_UART_Receive_IT(&huart1,&ReceivedByte,1); //start next data receive interrupt
 

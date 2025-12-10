@@ -19,6 +19,7 @@
 #define EEPROM_RELEASE_DPD_READ_ID       	0xAB      /**< release from deep power-down and read electronic signature command */
 
 #define EEPROM_PAGE_SIZE 128    // The specific page size of the EEPROM
+#define EEMPROM_NUM_PAGES 8     // 1024 / 128 = 8 pages
 #define EEPROM_MAX_ADDRESS 			65535U 	  /*512Kb = 65535kB*/
 #define PAGE_0_ADDRESS 0x0000 // Start of the first page
 
@@ -30,7 +31,6 @@
 #define ERASE_TIMEOUT_MS 500 // 500ms should be safe for most sector/page erases
 #define SECTOR_ERASE_TIMEOUT_MS 500  // 500ms should be safe for most sectors (e.g., 4kB/64kB)
 #define CHIP_ERASE_TIMEOUT_MS 5000 // 5000ms (5 seconds) for safety, as chip erase is the slowest
-
 
 #endif // EEPROM_H_INCLUDED
 
@@ -128,3 +128,14 @@ HAL_StatusTypeDef EEPROM_Deep_Power_Down(void);
   * @retval HAL status.
   */
 HAL_StatusTypeDef EEPROM_Release_Deep_Power_Down(void);
+
+void EEPROM_Write1K(SPI_HandleTypeDef *hspi, uint32_t StartAddr, uint8_t *Data, uint16_t Length);
+
+/**
+ * @brief Reads a specified length of data from the EEPROM starting at StartAddr.
+ * * @param hspi Pointer to the SPI Handle (e.g., &hspi1).
+ * @param StartAddr The 24-bit memory address to start reading from.
+ * @param Data Pointer to the buffer where the received data will be stored.
+ * @param Length The number of bytes to read (e.g., 1024).
+ */
+void EEPROM_Read1K(SPI_HandleTypeDef *hspi, uint32_t StartAddr, uint8_t *Data, uint16_t Length);

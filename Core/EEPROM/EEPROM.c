@@ -338,3 +338,77 @@ HAL_StatusTypeDef EEPROM_Release_Deep_Power_Down(void)
 
     return status;
 }
+
+void EEPROM_Write1K(SPI_HandleTypeDef *hspi, uint32_t StartAddr, uint8_t *Data, uint16_t Length) {
+
+    // Check if the requested length is actually 1024 bytes and is aligned to page size (optional but good practice)
+    if (Length != 1024 || (StartAddr % EEPROM_PAGE_SIZE) != 0) {
+        // Handle error or return
+        return;
+    }
+
+    for (int i = 0; i < EEMPROM_NUM_PAGES; i++) {
+        uint32_t current_addr = StartAddr + (i * EEPROM_PAGE_SIZE);
+        uint8_t *current_data = Data + (i * EEPROM_PAGE_SIZE);
+
+        // --- 1. Send Write Enable (WREN) ---
+        EEPROM_CS_Select();
+        uint8_t wren_cmd = EEPROM_WREN_REG;
+        HAL_SPI_Transmit(hspi, &wren_cmd, 1, HAL_MAX_DELAY);
+        EEPROM_CS_Deselect();
+
+        // Wait a small time (optional, but can help with setup time)
+        // HAL_Delay(1);
+
+        // --- 2. Send Page Program (PP) with Address and Data ---
+        EEPROM_CS_Select();
+
+        // Command + 3-byte Address (24-bit address)
+        uint8_t header[4];
+        header[0] = EEPROM_WRITE_REG;
+        header[1] = (uint8_t)((current_addr >> 16) & 0xFF); // A23-A16 (only A16 is used for 512Kbit)
+        header[2] = (uint8_t)((current_addr >> 8) & 0xFF);  // A15-A8
+        header[3] = (uint8_t)(current_addr & 0xFF);         // A7-A0
+
+        // Send Command and Address
+        HAL_SPI_Transmit(hspi, header, 4, HAL_MAX_DELAY);
+
+        // Send 128 bytes of data
+        HAL_SPI_Transmit(hspi, current_data, EEPROM_PAGE_SIZE, HAL_MAX_DELAY);
+
+        EEPROM_CS_Deselect();
+
+        // --- 3. Wait for Write Cycle to Complete ---
+        EEPROM_Wait_For_Write_Completion(ERASE_TIMEOUT_MS);
+    }
+}
+
+void EEPROM_Read1K(SPI_HandleTypeDef *hspi, uint32_t StartAddr, uint8_t *Data, uint16_t Length) {
+
+    // Command + 3-byte Address (24-bit address)
+    uint8_t header[4];
+    header[0] = EEPROM_READ_REG;
+    header[1] = (uint8_t)((StartAddr >> 16) & 0xFF); // A23-A16
+    header[2] = (uint8_t)((StartAddr >> 8) & 0xFF);  // A15-A8
+    header[3] = (uint8_t)(StartAddr & 0xFF);         // A7-A0
+
+    EEPROM_CS_Select();
+
+    // 1. Send the READ command and the 24-bit Start Address
+    // We use HAL_SPI_Transmit to send the 4 header bytes
+    if (HAL_SPI_Transmit(hspi, header, 4, HAL_MAX_DELAY) != HAL_OK) {
+        // Handle error
+    	EEPROM_CS_Deselect();
+        return;
+    }
+
+    // 2. Receive the data stream (1024 bytes)
+    // The SPI peripheral automatically sends dummy bytes during reception to generate the clock
+    if (HAL_SPI_Receive(hspi, Data, Length, HAL_MAX_DELAY) != HAL_OK) {
+        // Handle error
+    	EEPROM_CS_Deselect();
+        return;
+    }
+
+    EEPROM_CS_Deselect();
+}
